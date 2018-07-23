@@ -10,6 +10,11 @@ fetchUntappd <- function(method = "", qryStr = "", writeFile = FALSE, fileName =
         if( nchar(fileName) == 0 ){
             fileName = paste( gsub( "/", ".", method ), qryStr, "json",sep="." )
         }
+        
+        if( response$status_code != 200 ){
+            fileName <- paste( "errors", fileName, sep="/")
+        }
+        
         fileName <- paste( "Responses", fileName, sep="/" )
         write( content( response, "text"), fileName) 
     }
@@ -31,6 +36,9 @@ getBreweryCheckIns <- function(breweryId, maxId = 0,  writeFile = FALSE){
     
     if( maxId > 0 ){
         qryStr <- paste("max_id=", maxId, sep="")
+    } else {
+        # default the fileName maxId to 999999999
+        maxId = 999999999
     }
         
     response <- fetchUntappd( 
