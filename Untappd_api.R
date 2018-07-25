@@ -48,3 +48,21 @@ getBreweryCheckIns <- function(breweryId, maxId = 0,  writeFile = FALSE){
         fileName = paste( "brewery.checkins", breweryId, maxId, "json",sep="." )
     )
 }
+
+getBeerCheckIns <- function(beerId, maxId = 0, writeFile = FALSE){
+    pathStr <- paste("beer/checkins/",beerId,sep="")
+    qryStr <- ""
+    if( maxId > 0 ){
+        qryStr <- paste("max_id=", maxId, sep="")
+    } else {
+        # default the fileName maxId to 999999999
+        maxId = 999999999
+    }
+    
+    response <- fetchUntappd( 
+        pathStr, 
+        qryStr, 
+        writeFile, 
+        fileName = paste( "beer.checkins", beerId, maxId, "json",sep="." )
+    )
+}
