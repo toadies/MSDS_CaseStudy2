@@ -64,6 +64,10 @@ while( y <= length(distinctBeerIds$beerId) ){
                 spiltUrl <- strsplit( checkins$response$pagination$next_url, "=" )
                 newMaxId <- spiltUrl[[1]][2]
                 newMaxId <- as.numeric(newMaxId)
+                
+                if( is.na(newMaxId) ){
+                    counter <- 0
+                }
                 print( counter )
             } else {
                 print ("Status Code Error")
