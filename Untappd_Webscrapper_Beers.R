@@ -57,10 +57,10 @@ get_user_checkin_nodes <- function(user.url, remDr, user.name) {
 #
 # Given a user name, the function will return a data frame of all the user checkin details
 #
-get_user_checkins <- function(user.name) {
-
+get_beer_details <- function(file.name) {
+  
   user.checkins <- data.frame(matrix(ncol = 47, nrow = 0))
-  colnames(user.checkins) <- c("UserName", "UserId", "CheckinId", "BeerId", "BeerName", "LocationId", "LocationName", "BreweryId", "BeerRating", "ABV", "IBU", "Style",
+  colnames(user.checkins) <- c("BeerId", "BreweryName", "BreweryURL", "Style", "ABV", "IBU", "Rating", "BreweryId", "BeerRating", "ABV", "IBU", "Style",
                                "Light", "Smooth", "Clean", "Sweet", "Woody", "Zippy", "Strong", "Hoppy", "Floral", "Citrus", "Milk", "Dark", "Creamy", "Mouthfeel",
                                "Soft", "Boozy", "Caramel", "Oatmeal", "Dry", "Malty", "Piney", "Grassy", "Tart", "Sour", "Salty", "Fruity", "Heat", "Bitter", "Coffee",
                                "Roasty", "Chocolate", "Juicy", "Funky", "Acidic", "Crushable")
@@ -152,7 +152,7 @@ get_user_checkins <- function(user.name) {
       user.checkins <- rbind(user.checkins, newCheckIn)
       Sys.sleep(5)
     },
-      error=function(e) {
+    error=function(e) {
       message("Error in: ", checkin.url) 
       message(e)
       counter <- counter + 1
