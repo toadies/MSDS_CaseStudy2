@@ -11,8 +11,8 @@ library(tidyr)
 library(RSelenium)
 library(stringr)
 
-setwd('C:/SMU/Courses/MSDS 6306 - DoingDataScience/github/MSDS_CaseStudy2/')
-source("env.R")
+setwd('C:/SMU/Courses/MSDS 6306 - DoingDataScience/github/MSDS_CaseStudy2/data')
+source("../env.R")
 source("Untappd_functions.R")
 
 #
@@ -111,7 +111,7 @@ get_beer_details <- function(file.name) {
     })
   }
   close_remote_chrome_driver(remDr)
-  write.csv(beer.details, file=paste("C:/SMU/Courses/MSDS 6306 - DoingDataScience/github/MSDS_CaseStudy2/data/BeerDetails.csv", sep = ""), row.names = FALSE)
+  write.csv(beer.details, file="C:/SMU/Courses/MSDS 6306 - DoingDataScience/github/MSDS_CaseStudy2/data/Chris-BeerDetails.csv", row.names = FALSE)
   beer.details
 }
 

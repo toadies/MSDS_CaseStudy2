@@ -60,7 +60,8 @@ user.showmore <- html_nodes(user.profile, 'a[data-user-name="Chrisballenger"]')
 # Use RSelenium Package to navigate to multiple packages
 # - Install RSelenium package from tar/zip file
 # - Install Chrome driver
-# - Need to start Selenium server: java -D"webdriver.chrome.driver"="c:\tools\chromedriver.exe" -jar .\selenium-server-standalone-3.13.0.jar 
+# - Need to start Selenium server: java -Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=3333 -D"webdriver.chrome.driver"="c:\tools\chromedriver.exe" 
+#                                  -jar .\selenium-server-standalone-3.13.0.jar 
 #   before running the following code.
 #
 remDr <- remoteDriver(browserName="chrome")

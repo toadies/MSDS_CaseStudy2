@@ -118,3 +118,18 @@ combine_flavor_profiles <- function() {
   }
   write.csv(user.profile, file="C:/SMU/Courses/MSDS 6306 - DoingDataScience/github/MSDS_CaseStudy2/data/MasterUserProfile.csv", row.names = FALSE)
 }
+
+classify_checkins <- function() {
+  checkins <- read.csv("C:/SMU/Courses/MSDS 6306 - DoingDataScience/github/MSDS_CaseStudy2/data/checkins-modified.csv", stringsAsFactors = FALSE)
+  brewery.locations <- read.csv("C:/SMU/Courses/MSDS 6306 - DoingDataScience/github/MSDS_CaseStudy2/data/BreweryLocations.csv", stringsAsFactors = FALSE)
+  
+  checkins[,"isBreweryLocation"] <- c(0)
+  for(row in 1:nrow(checkins)) {
+    if(checkins[row,]$venueId %in% brewery.locations$BreweryVenue) {
+      checkins[row,]$isBreweryLocation=1
+    } else {
+      checkins[row,]$isBreweryLocation=0
+    }
+  }
+  write.csv(checkins, file="C:/SMU/Courses/MSDS 6306 - DoingDataScience/github/MSDS_CaseStudy2/data/checkins-modified1.csv", row.names = FALSE)
+}
