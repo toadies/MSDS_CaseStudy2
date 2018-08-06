@@ -6,7 +6,9 @@ source("Untappd_api.R")
 
 result <- data.frame()
 jsonObjects <- list.files("Responses/")
-filterObjects <- jsonObjects[grep("*json",jsonObjects)]
+length(jsonObjects)
+filterObjects <- jsonObjects[grep("*.json",jsonObjects)]
+length(filterObjects)
 for(i in 1:length(filterObjects) ){
     # if( length(grep("*beer.checkins*",jsonObjects[i] )) >= 1 ){
     checkins <- fromJSON(paste("Responses/", filterObjects[i], sep=""))
@@ -17,30 +19,21 @@ for(i in 1:length(filterObjects) ){
     print( paste(i, "-", dim(result)[1] ) )
 }
 
-# a list in which each element is one of the JSON files
-# result <- lapply(
-#     filterObjects,
-#     function(x){
-#         print(x)
-#         readBeerCheckins(
-#             fromJSON(paste("Responses/", x, sep=""))
-#         )
-#     }
-# )
-# result <- do.call(rbind.data.frame, result)
-# write.csv(result,"checkins1.csv")
-
-# dim(result)
-# str(result)
+#remove duplicates
 result.distinct <- unique(result)
+
+result.distinct.count <- count(result.distinct$checkinId)
+result.distinct <- merge(result.distinct, result.distinct.count, by.x="checkinId", by.y="x")
+result.distinct <- result.distinct[result.distinct$freq == 1,]
+
+
 beerIds <- plyr::count(result.distinct, "beerId")
 distinctBeerIds <- beerIds[order(beerIds$freq, decreasing = F),]
-# distinctBeerIds
-# dim(result)
-# dim(result.distinct)
-str(result.distinct)
+
+# Save Data
 write.csv(result.distinct, "checkins.csv", row.names=FALSE)
 
+# Get min \ max checkin details for future checkin data gathering
 maxIds <- aggregate( result.distinct$checkinId, list( result.distinct$beerId ), max )
 minIds <- aggregate( result.distinct$checkinId, list( result.distinct$beerId ), min )
 lastCreatedDate <- aggregate( 
@@ -50,13 +43,14 @@ lastCreatedDate <- aggregate(
     na.rm=TRUE 
 )
 
-breweries <- unique(result.distinct[,1:4])
+str(result.distinct)
+
+breweries <- unique(result.distinct[,1:8])
 str(breweries)
 breweries <- merge(breweries, distinctBeerIds, by.x = "beerId", by.y = "beerId" )
 breweries <- merge(breweries, maxIds, by.x = "beerId", by.y = "Group.1")
 breweries <- merge(breweries, minIds, by.x = "beerId", by.y = "Group.1")
 breweries <- merge(breweries, lastCreatedDate, by.x = "beerId", by.y = "Group.1")
-names(breweries) <- c("beerId","breweryId","breweryName","beerName","totalCheckins","maxId","minId", "lastCreatedDate")
 
 write.csv(breweries, "breweries.csv",row.names = FALSE)
 
@@ -78,4 +72,4 @@ head(breweries)
 # 38053
 dim(result.distinct)
 
-length(unique(result.distinct$checkinId))
+length(result.distinct$checkinId) - length( unique(result.distinct$checkinId) )
