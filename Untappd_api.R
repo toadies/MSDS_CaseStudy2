@@ -149,6 +149,10 @@ readBeerCheckins <- function(checkins = list()){
     data.frame(
         breweryId = items$brewery$brewery_id,
         breweryName = items$brewery$brewery_name,
+        breweryLocation = items$brewery$location$brewery_city,
+        breweryState = items$brewery$location$brewery_state,
+        breweryLat = items$brewery$location$lat,
+        breweryLng = items$brewery$location$lng,
         beerId = items$beer$bid,
         beerName = items$beer$beer_name,
         beerDescription = items$beer$beer_description,

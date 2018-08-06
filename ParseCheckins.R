@@ -2,13 +2,10 @@ setwd("/Users/christopherballenger/Documents/Data Science/MSDS 6306/Projects/Cas
 
 library(jsonlite)
 library(plyr)
-
-jsonObjects <- list.files("Responses/")
-i = 1
 source("Untappd_api.R")
 
 result <- data.frame()
-
+jsonObjects <- list.files("Responses/")
 filterObjects <- jsonObjects[grep("*json",jsonObjects)]
 for(i in 1:length(filterObjects) ){
     # if( length(grep("*beer.checkins*",jsonObjects[i] )) >= 1 ){
