@@ -102,14 +102,14 @@ readBeerCheckins <- function(checkins = list()){
             venue <- checkins$response$checkins$items[i,]$venue[[1]]
         }
         
-        if( length(checkins$response$checkins$items[i,]$venue[[1]]) > 0 ){
+        if( length(venue) > 0 ){
             venueId[i] <- venue$venue_id
             venueName[i] <- venue$venue_name
             venueParentCategory[i] <- ifelse(!is.null(venue$primary_category),venue$primary_category,NA)
             venueParentCategoryId[i] <- ifelse(!is.null(venue$parent_category_id),venue$parent_category_id,NA)
             if(venue$categories$count > 0){
                 if(class(venue$categories$items) == "data.frame"){
-                    categories <- venue$categories.items[1,]
+                    categories <- venue$categories$items[1,]
                 } else {
                     categories <- venue$categories$items[[1]]
                 }

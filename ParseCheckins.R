@@ -6,22 +6,11 @@ library(plyr)
 jsonObjects <- list.files("Responses/")
 i = 1
 source("Untappd_api.R")
-# result <- data.frame(
-#     breweryId = numeric(),
-#     breweryName = character(),
-#     beerId = numeric(),
-#     beerName = character(),
-#     beerStyle = character(),
-#     beerAbv = numeric(),
-#     beerIbu = numeric(),
-#     checkinId = numeric(),
-#     createdAt = character(),
-#     ratingScore = numeric()
-# )
+
 result <- data.frame()
-# filterObjects <- jsonObjects[grep("*beer.checkins*",jsonObjects)]
-filterObjects <- jsonObjects[grep("*son",jsonObjects)]
-while( i <= length(filterObjects) ){
+
+filterObjects <- jsonObjects[grep("*json",jsonObjects)]
+for(i in 1:length(filterObjects) ){
     # if( length(grep("*beer.checkins*",jsonObjects[i] )) >= 1 ){
     checkins <- fromJSON(paste("Responses/", filterObjects[i], sep=""))
     if( checkins$response$checkins$count > 0 ){
@@ -29,7 +18,6 @@ while( i <= length(filterObjects) ){
     }
     # }
     print( paste(i, "-", dim(result)[1] ) )
-    i = i + 1
 }
 
 # a list in which each element is one of the JSON files
@@ -54,7 +42,7 @@ distinctBeerIds <- beerIds[order(beerIds$freq, decreasing = F),]
 # dim(result)
 # dim(result.distinct)
 str(result.distinct)
-write.csv(result.distinct, "checkins.csv")
+# write.csv(result.distinct, "checkins.csv")
 
 maxIds <- aggregate( result.distinct$checkinId, list( result.distinct$beerId ), max )
 minIds <- aggregate( result.distinct$checkinId, list( result.distinct$beerId ), min )
@@ -73,7 +61,7 @@ breweries <- merge(breweries, minIds, by.x = "beerId", by.y = "Group.1")
 breweries <- merge(breweries, lastCreatedDate, by.x = "beerId", by.y = "Group.1")
 names(breweries) <- c("beerId","breweryId","breweryName","beerName","totalCheckins","maxId","minId", "lastCreatedDate")
 
-write.csv(breweries, "breweries.csv",row.names = FALSE)
+# write.csv(breweries, "breweries.csv",row.names = FALSE)
 
 head(breweries)
 
@@ -91,4 +79,5 @@ head(breweries)
 # 35275
 # 36879
 # 38053
-dim(result.distinct)
+
+result.distinct$venueCategory
