@@ -42,7 +42,7 @@ distinctBeerIds <- beerIds[order(beerIds$freq, decreasing = F),]
 # dim(result)
 # dim(result.distinct)
 str(result.distinct)
-# write.csv(result.distinct, "checkins.csv")
+write.csv(result.distinct, "checkins.csv", row.names=FALSE)
 
 maxIds <- aggregate( result.distinct$checkinId, list( result.distinct$beerId ), max )
 minIds <- aggregate( result.distinct$checkinId, list( result.distinct$beerId ), min )
@@ -61,7 +61,7 @@ breweries <- merge(breweries, minIds, by.x = "beerId", by.y = "Group.1")
 breweries <- merge(breweries, lastCreatedDate, by.x = "beerId", by.y = "Group.1")
 names(breweries) <- c("beerId","breweryId","breweryName","beerName","totalCheckins","maxId","minId", "lastCreatedDate")
 
-# write.csv(breweries, "breweries.csv",row.names = FALSE)
+write.csv(breweries, "breweries.csv",row.names = FALSE)
 
 head(breweries)
 
@@ -79,5 +79,6 @@ head(breweries)
 # 35275
 # 36879
 # 38053
+dim(result.distinct)
 
-result.distinct$venueCategory
+length(unique(result.distinct$checkinId))
