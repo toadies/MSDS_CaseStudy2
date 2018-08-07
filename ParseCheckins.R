@@ -38,8 +38,6 @@ result.distinct <- merge(result.distinct, breweryIdToVenueId, by.x = c("breweryI
 result.distinct$isBreweryLocation <- as.numeric(levels(result.distinct$isBreweryLocation))[result.distinct$isBreweryLocation]
 result.distinct[is.na(result.distinct$isBreweryLocation)&!is.na(result.distinct$venueId),30] <- rep(0,length(result.distinct[is.na(result.distinct$isBreweryLocation)&!is.na(result.distinct$venueId),30]))
 
-
-
 beerIds <- plyr::count(result.distinct, "beerId")
 distinctBeerIds <- beerIds[order(beerIds$freq, decreasing = F),]
 
