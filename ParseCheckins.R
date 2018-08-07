@@ -31,18 +31,27 @@ result.distinct <- result.distinct[result.distinct$freq == 1,]
 breweryIdToVenueId <- data.frame(
     breweryId = c(48372,29815,11028,185850,45011,134551,13688), 
     venueId = c(556774,390025,113377,1950200,2308401,2482920,219154),
-    isBreweryLocation = rep(1,7)
+    isBreweryLocation = rep("Y",7)
 )
 
 result.distinct <- merge(result.distinct, breweryIdToVenueId, by.x = c("breweryId","venueId"), by.y = c("breweryId","venueId"), all.x = TRUE)
-result.distinct$isBreweryLocation <- as.numeric(levels(result.distinct$isBreweryLocation))[result.distinct$isBreweryLocation]
-result.distinct[is.na(result.distinct$isBreweryLocation)&!is.na(result.distinct$venueId),30] <- rep(0,length(result.distinct[is.na(result.distinct$isBreweryLocation)&!is.na(result.distinct$venueId),30]))
+result.distinct$isBreweryLocation <- as.character(result.distinct$isBreweryLocation)
+result.distinct[is.na(result.distinct$isBreweryLocation)&!is.na(result.distinct$venueId),30] <- "N"
+
+
+# str(result.distinct[is.na(result.distinct$isBreweryLocation),])
+
+# result.distinct <- result.distinct[,]
+# str(result.distinct)
+
+# Save Data
+write.csv(result.distinct, "data/checkins.csv", row.names=FALSE)
+
 
 beerIds <- plyr::count(result.distinct, "beerId")
 distinctBeerIds <- beerIds[order(beerIds$freq, decreasing = F),]
 
-# Save Data
-write.csv(result.distinct, "data/checkins.csv", row.names=FALSE)
+
 
 # Get min \ max checkin details for future checkin data gathering
 maxIds <- aggregate( result.distinct$checkinId, list( result.distinct$beerId ), max )

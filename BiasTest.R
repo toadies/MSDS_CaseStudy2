@@ -1,0 +1,36 @@
+setwd("/Users/christopherballenger/Documents/Data Science/MSDS 6306/Projects/CaseStudy2")
+
+library(jsonlite)
+library(plyr)
+source("env.R")
+source("Untappd_api.R")
+
+## get beer list from a brewery id
+checkins <- read.csv("data/checkins.csv")
+
+# remove no venue checkins
+checkins.filter <- checkins[!is.na(checkins$isBreweryLocation),]
+
+# remove 0 rating scores
+checkins.filter <- checkins.filter[checkins.filter$ratingScore != 0,]
+
+dim(checkins.filter)
+
+hist(checkins.filter$ratingScore)
+qqnorm(checkins.filter$ratingScore, main='Rating Scores')
+qqline(checkins.filter$ratingScore)
+
+checkins.filter$ratingScoreExp <- exp(checkins.filter$ratingScore)
+
+checkins.filter.deepellum <- checkins.filter[checkins.filter$breweryId==11028,]
+str(checkins.filter)
+
+dim(checkins.filter.deepellum[checkins.filter.deepellum$isBreweryLocation=="Y",])
+
+hist(checkins.filter.deepellum[checkins.filter.deepellum$isBreweryLocation=="N",]$ratingScore, main="At the Brewery")
+qqnorm(checkins.filter.deepellum[checkins.filter.deepellum$isBreweryLocation=="N",]$ratingScore, main="At the Brewery")
+qqline(checkins.filter.deepellum[checkins.filter.deepellum$isBreweryLocation=="N",]$ratingScore)
+
+boxplot(checkins.filter.deepellum[checkins.filter.deepellum$isBreweryLocation=="N",]$ratingScore)
+length(checkins.filter.deepellum[checkins.filter.deepellum$isBreweryLocation=="N",]$ratingScore)
+length(checkins.filter.deepellum[checkins.filter.deepellum$isBreweryLocation=="Y",]$ratingScore)
