@@ -24,14 +24,27 @@ result.distinct <- unique(result)
 
 result.distinct.count <- count(result.distinct$checkinId)
 result.distinct <- merge(result.distinct, result.distinct.count, by.x="checkinId", by.y="x")
+
 result.distinct <- result.distinct[result.distinct$freq == 1,]
+
+#Identify if checkin was at brewery
+breweryIdToVenueId <- data.frame(
+    breweryId = c(48372,29815,11028,185850,45011,134551,13688), 
+    venueId = c(556774,390025,113377,1950200,2308401,2482920,219154),
+    isBreweryLocation = rep(1,7)
+)
+
+result.distinct <- merge(result.distinct, breweryIdToVenueId, by.x = c("breweryId","venueId"), by.y = c("breweryId","venueId"), all.x = TRUE)
+result.distinct$isBreweryLocation <- as.numeric(levels(result.distinct$isBreweryLocation))[result.distinct$isBreweryLocation]
+result.distinct[is.na(result.distinct$isBreweryLocation)&!is.na(result.distinct$venueId),30] <- rep(0,length(result.distinct[is.na(result.distinct$isBreweryLocation)&!is.na(result.distinct$venueId),30]))
+
 
 
 beerIds <- plyr::count(result.distinct, "beerId")
 distinctBeerIds <- beerIds[order(beerIds$freq, decreasing = F),]
 
 # Save Data
-write.csv(result.distinct, "checkins.csv", row.names=FALSE)
+write.csv(result.distinct, "data/checkins.csv", row.names=FALSE)
 
 # Get min \ max checkin details for future checkin data gathering
 maxIds <- aggregate( result.distinct$checkinId, list( result.distinct$beerId ), max )
@@ -45,14 +58,14 @@ lastCreatedDate <- aggregate(
 
 str(result.distinct)
 
-breweries <- unique(result.distinct[,1:8])
+breweries <- unique(result.distinct[,2:10])
 str(breweries)
 breweries <- merge(breweries, distinctBeerIds, by.x = "beerId", by.y = "beerId" )
 breweries <- merge(breweries, maxIds, by.x = "beerId", by.y = "Group.1")
 breweries <- merge(breweries, minIds, by.x = "beerId", by.y = "Group.1")
 breweries <- merge(breweries, lastCreatedDate, by.x = "beerId", by.y = "Group.1")
 
-write.csv(breweries, "breweries.csv",row.names = FALSE)
+write.csv(breweries, "data/breweries.csv",row.names = FALSE)
 
 head(breweries)
 
