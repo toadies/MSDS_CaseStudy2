@@ -22,7 +22,7 @@ for(i in 1:length(filterObjects) ){
 
 dim(result)
 
-#remove duplicates
+# remove duplicates
 result.distinct <- unique(result)
 names(result.distinct)
 result.distinct.count <- plyr::count(result.distinct$checkinId)
@@ -39,12 +39,16 @@ breweryIdToVenueId <- data.frame(
 
 result.distinct <- left_join(
     result.distinct,
-    breweryIdToVenueId, 
-    by = c("breweryId" = "breweryId", "venueId" = "venueId" )
+    breweryIdToVenueId
 )
 dim(result.distinct)
+summary(result.distinct)
 result.distinct$isBreweryLocation <- as.character(result.distinct$isBreweryLocation)
-result.distinct[is.na(result.distinct$isBreweryLocation)&!is.na(result.distinct$venueId),30] <- "N"
+result.distinct[is.na(result.distinct$isBreweryLocation)&!is.na(result.distinct$venueId),31] <- "N"
+
+sum(result.distinct$isBreweryLocation=="Y",na.rm=T)
+sum(result.distinct$isBreweryLocation=="N",na.rm=T)
+sum(is.na(result.distinct$isBreweryLocatio))
 
 # Simplfy Beer Styles with a BeerCategory
 beerCategories <- read.csv("beerstyle.csv", stringsAsFactors = FALSE)
