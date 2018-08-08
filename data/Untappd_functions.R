@@ -134,3 +134,4 @@ classify_checkins <- function() {
   }
   write.csv(checkins, file="C:/SMU/Courses/MSDS 6306 - DoingDataScience/github/MSDS_CaseStudy2/data/checkins-final.csv", row.names = FALSE)
 }
+
