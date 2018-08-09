@@ -27,10 +27,34 @@ str(checkins.filter)
 
 dim(checkins.filter.deepellum[checkins.filter.deepellum$isBreweryLocation=="Y",])
 
+boxplot(
+    ratingScore ~ isBreweryLocation,
+    checkins.filter.deepellum
+)
 hist(checkins.filter.deepellum[checkins.filter.deepellum$isBreweryLocation=="N",]$ratingScore, main="At the Brewery")
 qqnorm(checkins.filter.deepellum[checkins.filter.deepellum$isBreweryLocation=="N",]$ratingScore, main="At the Brewery")
 qqline(checkins.filter.deepellum[checkins.filter.deepellum$isBreweryLocation=="N",]$ratingScore)
 
-boxplot(checkins.filter.deepellum[checkins.filter.deepellum$isBreweryLocation=="N",]$ratingScore)
+
 length(checkins.filter.deepellum[checkins.filter.deepellum$isBreweryLocation=="N",]$ratingScore)
 length(checkins.filter.deepellum[checkins.filter.deepellum$isBreweryLocation=="Y",]$ratingScore)
+count(checkins.filter.deepellum$ratingScore)
+
+breweryIds <- unique(checkins.filter[,c(1,4)])
+for(i in 1:length(breweryIds$breweryId)){
+    ttest <- t.test(
+        ratingScore ~ isBreweryLocation,
+        data=checkins.filter[checkins.filter$breweryId==breweryIds[i,1],],
+        var.equal=T, conf.level=0.95
+    )
+    print( paste( breweryIds[i,1], "-", ttest$p.value, sep=" "))
+}
+
+ttest <- t.test(
+    ratingScore ~ isBreweryLocation,
+    data=checkins.filter[checkins.filter$breweryId==48372,],
+    var.equal=T, conf.level=0.95
+)
+ttest
+
+read.csv("beerstyle.csv")
