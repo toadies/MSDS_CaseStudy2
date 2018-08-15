@@ -5,8 +5,10 @@ library(jsonlite)
 source("env.R")
 source("Untappd_api.R")
 y <- 1
-while( y <= length(distinctBeerIds$beerId) ){
-    if( distinctBeerIds[y,2] < 300){
+
+
+while( y <= length(breweries$beerId) ){
+    if( breweries[y,2] < 300){
         # Set Beer Id
         newBeerId <- distinctBeerIds[y,1]
         
@@ -18,7 +20,7 @@ while( y <= length(distinctBeerIds$beerId) ){
         i <- 1
         while( i <= length(jsonObjects) ){
             x <- strsplit(jsonObjects[i], "\\.")
-            if( length(grep("*brewery.checkins*",jsonObjects[i] )) >= 1 && jsonObjects[i] != "errors" ){
+            if( length(grep("*beer.checkins*",jsonObjects[i] )) >= 1 && jsonObjects[i] != "errors" ){
                 beerIds[i] <- as.numeric(x[[1]][3])
                 maxIds[i] <- as.numeric(x[[1]][4])
             }
@@ -32,7 +34,11 @@ while( y <= length(distinctBeerIds$beerId) ){
             response <- getBeerCheckIns( beerId = newBeerId, writeFile=TRUE )
             counter <- response$headers$`x-ratelimit-remaining`
             checkins <- fromJSON(content(response,"text") )
-            newMaxId <- checkins$response$pagination$max_id
+            if(checkins$response$checkins$count == 25 ) {
+                newMaxId <- checkins$response$pagination$max_id
+            } else {
+                counter <- 0
+            }
             if( length( paginations$beerId ) == 0 ) {
                 paginations <- data.frame(beerId = newBeerId, maxId = newMaxId)
             } else {
@@ -45,10 +51,14 @@ while( y <= length(distinctBeerIds$beerId) ){
             #Get new max_id
             jsonFile <- paste("/Responses/beer.checkins",newBeerId, newMaxId, "json",sep=".")
             checkins <- fromJSON(paste(getwd(), jsonFile, sep=""))
-            spiltUrl <- strsplit( checkins$response$pagination$next_url, "=" )
-            newMaxId <- spiltUrl[[1]][2]
-            newMaxId <- as.numeric(newMaxId)
-            counter <- 100
+            if(checkins$response$checkins$count == 25 ) {
+                spiltUrl <- strsplit( checkins$response$pagination$next_url, "=" )
+                newMaxId <- spiltUrl[[1]][2]
+                newMaxId <- as.numeric(newMaxId)
+                counter <- 100
+            } else {
+                counter <- 0
+            }
         }
         # Run Loop
         while(counter >= 1){
@@ -61,11 +71,16 @@ while( y <= length(distinctBeerIds$beerId) ){
                 
                 #Get new max_id
                 checkins <- fromJSON(content(response,"text") )
-                spiltUrl <- strsplit( checkins$response$pagination$next_url, "=" )
-                newMaxId <- spiltUrl[[1]][2]
-                newMaxId <- as.numeric(newMaxId)
                 
-                if( is.na(newMaxId) ){
+                if( checkins$response$checkins$count == 25 ) {
+                    spiltUrl <- strsplit( checkins$response$pagination$next_url, "=" )
+                    newMaxId <- spiltUrl[[1]][2]
+                    newMaxId <- as.numeric(newMaxId)
+                    if( is.na(newMaxId) ){
+                        counter <- 0
+                    }
+                } else {
+                    print( "count is zero" )
                     counter <- 0
                 }
                 print( counter )

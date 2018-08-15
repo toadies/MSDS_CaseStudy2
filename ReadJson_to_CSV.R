@@ -2,7 +2,7 @@ library(jsonlite)
 library(tibble)
 library(dplyr)
 library(tidyr)
-setwd("C:/Users/Anand/Documents/SMU/DDS/GITHUB/Case-Study-2/MSDS_CaseStudy2/")
+setwd("/Users/christopherballenger/Documents/Data Science/MSDS 6306/Projects/CaseStudy2")
 
 path= "Responses/1/"
 #TODO Include code to filter all error data

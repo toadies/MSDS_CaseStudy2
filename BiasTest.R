@@ -3,14 +3,35 @@ setwd("/Users/christopherballenger/Documents/Data Science/MSDS 6306/Projects/Cas
 library(jsonlite)
 library(plyr)
 library(dplyr)
+library(GGally)
+library(ggplot2)
 source("env.R")
 source("Untappd_api.R")
 
 ## get beer list from a brewery id
 checkins <- read.csv("data/checkins.csv")
 
+# Add missing ABVs
+checkins[checkins$beerId==2730189,10] <- 6.6
+checkins[checkins$beerId==2491888,10] <- 7.8
+checkins[checkins$beerId==2753558,10] <- 10
+checkins[checkins$beerId==2612544,10] <- 7.5
+checkins[checkins$beerId==1045284,11] <- 11
+checkins[checkins$beerId==1149406,11] <- 15
+checkins[checkins$beerId==1205273,11] <- 23
+checkins[checkins$beerId==1504257,11] <- 26
+checkins[checkins$beerId==1675406,11] <- 100
+checkins[checkins$beerId==1900155,11] <- 60
+checkins[checkins$beerId==594726,11] <- 85
+checkins[checkins$beerId==868007,11] <- 90
+checkins[checkins$beerId==2612544,11] <- 33
+checkins[checkins$beerId==2753558,11] <- 90
+checkins[checkins$beerId==2596823,11] <- 80
+checkins[checkins$beerId==2628356,11] <- 8
+
 # remove no venue checkins
 checkins.filter <- checkins[!is.na(checkins$isBreweryLocation),]
+# Remove 0 ratings
 checkins.filter <- checkins.filter[checkins.filter$ratingScore != 0,]
 dim(checkins.filter)
 
@@ -34,11 +55,11 @@ dim(checkins.filter.deepellum[checkins.filter.deepellum$isBreweryLocation=="Y",]
 
 boxplot(
     ratingScore ~ isBreweryLocation,
-    checkins.filter.deepellum
+    checkins.filter
 )
-hist(checkins.filter.deepellum[checkins.filter.deepellum$isBreweryLocation=="N",]$ratingScore, main="At the Brewery")
-qqnorm(checkins.filter.deepellum[checkins.filter.deepellum$isBreweryLocation=="N",]$ratingScore, main="At the Brewery")
-qqline(checkins.filter.deepellum[checkins.filter.deepellum$isBreweryLocation=="N",]$ratingScore)
+hist(checkins.filter$ratingScore)
+qqnorm(checkins.filter$ratingScore, main='Rating Scores')
+qqline(checkins.filter$ratingScore)
 
 
 length(checkins.filter.deepellum[checkins.filter.deepellum$isBreweryLocation=="N",]$ratingScore)
@@ -82,7 +103,7 @@ for(i in 1:length(breweryIds$breweryId)){
 checkins.filter %>% count(userId, beerId, isBreweryLocation, sort = TRUE)
 
 checkins.filter.independent <- checkins.filter %>% 
-    group_by(breweryId, breweryName, userId, beerId, isBreweryLocation) %>% 
+    group_by(breweryId, breweryName, userId, beerId, beerName, beerAbv, beerIbu, isBreweryLocation, beerCategory) %>% 
     summarise(
         iRatingScore = mean(ratingScore)
     )
@@ -137,3 +158,46 @@ for(i in 1:length(breweryIds$breweryId)){
 }
 breweries
 
+
+# Multi Linear Regression Test to determine alcohol\ibu and beer style has impact with location
+# Assume indpendence we will average checkins by brewery, beer, location
+
+checkins.filter.multi.linear <- checkins.filter %>% 
+    group_by(breweryId, breweryName, beerId, beerName, beerAbv, beerIbu, beerStyle, isBreweryLocation, beerCategory) %>% 
+    summarise(
+        iRatingScore = mean(ratingScore)
+    )
+checkins.filter.multi.linear <- checkins.filter.multi.linear[checkins.filter.multi.linear$beerAbv>0,]
+checkins.filter.multi.linear <- checkins.filter.multi.linear[checkins.filter.multi.linear$beerIbu>0,]
+dim(checkins.filter.multi.linear)
+
+names(checkins.filter.multi.linear)
+ggpairs(checkins.filter.multi.linear, columns = c(5,11,10))
+checkins.filter.multi.linear$lBeerIbu <- log(checkins.filter.multi.linear$beerIbu)
+
+qqnorm(checkins.filter.multi.linear$lBeerIbu, main="IBUs")
+qqline(checkins.filter.multi.linear$lBeerIbu)
+
+
+model2 <- lm(
+            iRatingScore ~ 
+            + beerIbu 
+            + beerAbv 
+            # + lBeerIbu:beerAbv
+            + beerCategory:lBeerIbu
+            # + beerCategory:beerAbv
+            # + beerCategory:lBeerIbu:beerAbv
+            # + isBreweryLocation:beerStyle, 
+            ,data=checkins.filter.multi.linear
+            )
+plot(model2$residuals)
+hist(model2$residuals)
+summary(model2)
+
+beer.predict <- data.frame(
+    lBeerIbu = log(100), 
+    beerAbv = 10,
+    beerCategory = "IPA"
+)
+
+predict(model2, newdata = beer.predict, interval = c("confidence"), type = c("response"), level = .95)

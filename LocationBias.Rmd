@@ -14,6 +14,22 @@ library(ggplot2)
 library(kableExtra)
 library(dplyr)
 checkins <- read.csv("data/checkins.csv")
+checkins[checkins$beerId==2730189,10] <- 6.6
+checkins[checkins$beerId==2491888,10] <- 7.8
+checkins[checkins$beerId==2753558,10] <- 10
+checkins[checkins$beerId==2612544,10] <- 7.5
+checkins[checkins$beerId==1045284,11] <- 11
+checkins[checkins$beerId==1149406,11] <- 15
+checkins[checkins$beerId==1205273,11] <- 23
+checkins[checkins$beerId==1504257,11] <- 26
+checkins[checkins$beerId==1675406,11] <- 100
+checkins[checkins$beerId==1900155,11] <- 60
+checkins[checkins$beerId==594726,11] <- 85
+checkins[checkins$beerId==868007,11] <- 90
+checkins[checkins$beerId==2612544,11] <- 33
+checkins[checkins$beerId==2753558,11] <- 90
+checkins[checkins$beerId==2596823,11] <- 80
+checkins[checkins$beerId==2628356,11] <- 8
 checkins.filter <- checkins[!is.na(checkins$isBreweryLocation),]
 checkins.filter <- checkins.filter[checkins.filter$ratingScore != 0,]
 ```
