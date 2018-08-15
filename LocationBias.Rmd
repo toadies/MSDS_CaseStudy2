@@ -233,7 +233,7 @@ kable( head(checkins.filter) )%>%
   kable_styling(bootstrap_options = c("striped", "condensed"))
 ```
 
-### Test 1 - 2 Sample Test to determine bias in the locations
+### Test - 2 Sample Test to determine bias in the locations
 
 #### Assumptions
 ```{r echo=TRUE}

@@ -456,7 +456,7 @@ Summary of all the elements
 </tbody>
 </table>
 
-### Test 1 - 2 Sample Test to determine bias in the locations
+### Test - 2 Sample Test to determine bias in the locations
 
 #### Assumptions
 
@@ -809,3 +809,5 @@ kable( breweries ) %>%
 
 #### Conclusion
 At a significant level of .05, Peticolas, Nobel Rey, and Community mean rating is greater while consumed at the brewery versus not at the brewry.  A 95% confident intervals are listed above.
+
+This was an obersational study and no inference can be inferred from the study.  The data was consumed from a week worth of 300 checkins and not a random sample.  We can only inferre the outcome from this population.
