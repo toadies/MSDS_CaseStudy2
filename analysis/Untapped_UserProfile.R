@@ -24,6 +24,7 @@ user.profile.rf <- randomForest(train.user.profile[,-c(1,40)], train.user.profil
 user.profile.rf
 user.profile.rf$importance
 plot(user.profile.rf)
+plot(sort(user.profile.rf$importance))
 
 # Let's do some prediction for the test data
 user.rating.prediction <- round(predict(user.profile.rf, test.user.profile[,-c(1,40)]), 2)
