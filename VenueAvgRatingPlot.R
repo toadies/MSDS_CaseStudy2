@@ -14,7 +14,7 @@ checkIn_Dallas <- checkIn_all[checkIn_all$venueCity== "Dallas",]
 nrow(checkIn_Dallas)
 dallas_RSMean <- checkIn_Dallas %>% group_by(venueId) %>% mutate(meanRS = mean(ratingScore))%>% ungroup()
 
-dallasVenues <- sqldf("SELECT distinct venueId,venueName,meanRS, venueLat,venueLng FROM dallas_RSMean where isBreweryLocation='Y'")
+dallasVenues <- sqldf("SELECT distinct venueId,venueName,meanRS, venueLat,venueLng FROM dallas_RSMean where venueId != 'NA'")
 nrow(dallasVenues)
 head(dallasVenues)
 # write.csv(dallasVenues,file="data/dvtest.csv")
@@ -28,8 +28,10 @@ texasVenues <- sqldf('SELECT distinct venueId,venueName,meanRS, venueLat,venueLn
 peticolasVenues <- sqldf("SELECT distinct venueId, venueName, meanRS, venueLat, venueLng FROM texas_RSMean WHERE breweryId =13688")
 communityVenues <- sqldf("SELECT distinct venueId, venueName, meanRS, venueLat, venueLng FROM texas_RSMean WHERE breweryId =48372")
 
+
+data_json <- geojson_read("data/Dallas City Limits GIS Layer.geojson", what = "sp")
 p <- ggplot()+
-    ggtitle("Brewries")+ 
+    ggtitle("Dallas, Tx Beer Rating Activities")+ 
     xlab(" ")+
     ylab(" ")
 p <- p +theme(
@@ -45,7 +47,7 @@ p
 
 p<- p+ geom_point(aes(x = venueLng, y = venueLat,color=meanRS), data = dallasVenues,shape=18,size=2)
 p
-p <- p + scale_color_gradient(low="#C6FAB2",high="#42A11E")
+p <- p + scale_color_gradient(low="#C0FAAB",high="#388A19")
 # p <- p +scale_color_manual(name = "Rating Score Scale",
 #                            values = c("(-Inf,0]" = "black",
 #                                       "(0,1]" = "coral1",
