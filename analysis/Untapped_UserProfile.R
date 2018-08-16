@@ -5,6 +5,7 @@
 # Read the data
 master.user.profile <- read.csv("C:/SMU/Courses/MSDS 6306 - DoingDataScience/github/MSDS_CaseStudy2/data/MasterUserProfile.csv")
 
+# add preference column that has 
 # Subset random 80% of the observations for training, only the columns that we use as Predictors and the remaining observations for test
 train.user.profile <- master.user.profile[sample(nrow(master.user.profile), nrow(master.user.profile) * 0.8), c(1:39,45)]
 test.user.profile <- master.user.profile[!(master.user.profile$CheckinId %in% train.user.profile$CheckinId), c(1:39,45)]
@@ -20,6 +21,7 @@ library(h2o)
 #
 user.profile.rf <- randomForest(train.user.profile[,-c(1,40)], train.user.profile[,40])
 
+
 # Get some details about the model
 user.profile.rf
 user.profile.rf$importance
@@ -28,12 +30,14 @@ plot(sort(user.profile.rf$importance))
 
 # Let's do some prediction for the test data
 user.rating.prediction <- round(predict(user.profile.rf, test.user.profile[,-c(1,40)]), 2)
+user.rating.prediction <- round(predict(user.profile.rf, train.user.profile[,-c(1,40)]), 2)
 
 # How good did we do? Evaluate the results
 library(pROC)
 library(ggplot2)
 library(reshape2)
 library(caret)
+library(ModelMetrics)
 
 user.rating.reference <-  as.factor(test.user.profile[,40])
 
@@ -55,7 +59,15 @@ levels(user.rating.prediction.round) <- seq(1,5,0.25)
 levels(user.rating.reference) <- seq(1,5,0.25)
 confusionMatrix(data=user.rating.prediction.round, reference=user.rating.reference, positive='yes')
 
+# Second get a model using limited features
+user.profile.rf.2 <- randomForest(train.user.profile[,c(2, 3, 4, 38, 39)], as.factor(train.user.profile[,40]>=3.5))
+user.profile.rf.2
+user.profile.rf.2$importance
+plot(user.profile.rf.2)
+plot(sort(user.profile.rf.2$importance))
 
+user.profile.rf.2 <- randomForest(train.user.profile[,-c(1,40)], as.factor(train.user.profile[,40]>=3.5))
+user.rating.prediction.2 <- predict(user.profile.rf.2, test.user.profile[,-c(1,40)])
 
 # Second get a model using H2O library
 user.profile.h2o.rf <- h2o.randomForest(train.user.profile[,-39], train.user.profile[,39])
