@@ -69,5 +69,4 @@ plot(sort(user.profile.rf.2$importance))
 user.profile.rf.2 <- randomForest(train.user.profile[,-c(1,40)], as.factor(train.user.profile[,40]>=3.5))
 user.rating.prediction.2 <- predict(user.profile.rf.2, test.user.profile[,-c(1,40)])
 
-# Second get a model using H2O library
-user.profile.h2o.rf <- h2o.randomForest(train.user.profile[,-39], train.user.profile[,39])
+
