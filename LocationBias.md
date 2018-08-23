@@ -10,12 +10,13 @@ output:
 
 
 ##### State the Problem
-Identify if how beer drinker rate beers based on locations.
+Is there a bias in the way beer enthusiasts rate a beer at a brewery location and other locations?
 
 #### Data Collection
-Using the UnTappd API, we downloaded checkins from 7 Breweries in Dallas.  There is a limiation in the data UnTappd releases and only allows for last 300 checkins per beer.
+Using the UnTappd API, we downloaded checkins from 7 Breweries in Dallas.  There is a limitation in the data UnTappd releases and only allows for last 300 checkins per beer.
 
 API Web API
+* Untappd_API.R
 
 ```r
 fetchUntappd <- function(method = "", qryStr = "", writeFile = FALSE, fileName = ""){
@@ -191,7 +192,9 @@ readBeerCheckins <- function(checkins = list()){
 ```
 
 Steps we took to download checkin data
+
 1. Identify the brewery ids
+
     * Peticolas Brewering Company - 13688
     * Nobel Ray Brewing Company - 45011
     * Community Brewing Company - 48372
@@ -199,11 +202,12 @@ Steps we took to download checkin data
     * Braindead Brewing - 185850
     * Texas Ale Project - 134551
     * Deep Ellum Brewing Company - 11028
+    
 2. Get a base line checkins from brewery (BreweryCheckins.R)
-3. Loop through each of the beers checkins from the inital baseline (ParseCheckins.R)
-4. Parse all the JSON Objects
+3. Loop through each of the beers checkins from the initial baseline (ParseCheckins.R)
+4. Parse all the JSON Objects (ParseCheckins.R, data/checkins.csv)
 
-Summary of all the elements
+Sample View of the data
 <table class="table table-striped table-condensed" style="margin-left: auto; margin-right: auto;">
  <thead>
   <tr>
@@ -560,7 +564,7 @@ qqline(checkins.filter$ratingScore)
 
 ![](LocationBias_files/figure-html/unnamed-chunk-3-2.png)<!-- -->
 
-Visual evidence shows the data has a right skewness, but given our large sample size we expect central limit therom to be robust from violations in the data.  The data does show the ame user rating the beer multiple times in different locations.  In order to assume indpendent in our data we will average users rating per beer by either being at the brewery or not at the brewery (isBreweryLocation).  We will also exclude beers with less than 10 checkins per location from our population.
+Visual evidence shows the data has a right skewness, but given our large sample size we expect central limit theorem to be robust from violations in the data.  The data does show the same user rating the beer multiple times in different locations.  In order to assume independent within our each group, we will average users rating per beer by either being at the brewery or not at the brewery (isBreweryLocation).  We will also exclude beers with less than 10 checkins per location from our population and checkins whose rating was 0.
 
 
 ```r
@@ -663,8 +667,8 @@ kable( checkins.filter.independent[checkins.filter.independent$totalCheckins>=10
 </table>
 
 #### Hyptohesis Test
-Null Hyptohesis: µ ratings at the brewery = µ ratings not at the brewery
-Alternative Hyptohesis: µ ratings at the brewery > µ ratings not at the brewery
+Null Hypothesis: µ ratings at the brewery = µ ratings not at the brewery
+Alternative Hypothesis: µ ratings at the brewery > µ ratings not at the brewery
 
 
 ```r
@@ -808,6 +812,20 @@ kable( breweries ) %>%
 </table>
 
 #### Conclusion
-At a significant level of .05, Peticolas, Nobel Rey, and Community mean rating is greater while consumed at the brewery versus not at the brewry.  A 95% confident intervals are listed above.
+At a significant level of .05, Peticolas, Nobel Rey, and Community mean rating is greater while consumed at the brewery versus not at the brewery.  A 95% confident intervals are listed above.  Even though, the 3 breweries are statistically conclusive we need to note the average different is very small, thus the study is inconclusive.
 
-This was an obersational study and no inference can be inferred from the study.  The data was consumed from a week worth of 300 checkins and not a random sample.  We can only inferre the outcome from this population.
+This was an observational study and no inference can be made from the study.  The data was consumed from a week worth of 300 checkins and not a random sample.  We can only generalize about the downloaded population.  We also have independence violations between groups, where users could be checking in data and rating from both sites.
+
+Additonal Visual Analysis to help with predictions (TxVenueAvgRatingPlot.R, VenueAvgRatingPlot.R)
+
+Dallas, TX Heat Map
+![Caption](DallasRatings.png)
+
+Texas Heat Map
+![Caption](TexasPlot.png)
+
+Peticolas Heat Map
+![Caption](PeticolasPlot.png)
+
+Community Heat Map
+![Caption](CommunityPlot.png)
