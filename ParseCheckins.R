@@ -57,6 +57,24 @@ result.distinct$beerStyle <- as.character(result.distinct$beerStyle)
 result.distinct <- left_join(result.distinct, beerCategories, by = c("beerStyle" = "beerStyle"))
 dim(result.distinct)
 
+#Add Abv and IBus
+result.distinct[result.distinct$beerId==2730189,10] <- 6.6
+result.distinct[result.distinct$beerId==2491888,10] <- 7.8
+result.distinct[result.distinct$beerId==2753558,10] <- 10
+result.distinct[result.distinct$beerId==2612544,10] <- 7.5
+result.distinct[result.distinct$beerId==1045284,11] <- 11
+result.distinct[result.distinct$beerId==1149406,11] <- 15
+result.distinct[result.distinct$beerId==1205273,11] <- 23
+result.distinct[result.distinct$beerId==1504257,11] <- 26
+result.distinct[result.distinct$beerId==1675406,11] <- 100
+result.distinct[result.distinct$beerId==1900155,11] <- 60
+result.distinct[result.distinct$beerId==594726,11] <- 85
+result.distinct[result.distinct$beerId==868007,11] <- 90
+result.distinct[result.distinct$beerId==2612544,11] <- 33
+result.distinct[result.distinct$beerId==2753558,11] <- 90
+result.distinct[result.distinct$beerId==2596823,11] <- 80
+result.distinct[result.distinct$beerId==2628356,11] <- 8
+
 # Save Data
 names(result.distinct)
 write.csv(result.distinct, "data/checkins.csv", row.names=FALSE)
